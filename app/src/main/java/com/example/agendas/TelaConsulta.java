@@ -78,13 +78,30 @@ public class TelaConsulta extends AppCompatActivity {
     }
 
     public void RegistroProximo(View view){
-        cursor.moveToNext();
-        MostrarDados();
+        try {
+            cursor.moveToNext();
+            MostrarDados();
+        }catch (Exception ex){
+            if(cursor.isAfterLast()){
+                Msg("Não existem mais registros");
+            }else{
+                Msg("Erro ao navegar pelos registros");
+            }
+        }
     }
 
     public void RegistroAnterior(View view){
-        cursor.moveToPrevious();
-        MostrarDados();
+        try {
+            cursor.moveToPrevious();
+            MostrarDados();
+        }catch (Exception ex){
+            if(cursor.isBeforeFirst()){
+                Msg("Não existem mais registros");
+            }else{
+                Msg("Erro ao navegar pelos registros");
+            }
+        }
+
     }
 
     public void Msg(String txt){
