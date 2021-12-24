@@ -17,8 +17,11 @@ public class TelaConsulta extends AppCompatActivity {
     EditText etNome, etTelefone;
     Button btnAnterior, btnProximo, btnVoltar;
 
-    SQLiteDatabase db=null;
     Cursor cursor;
+
+    CxMsg msg;
+
+    database bd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,43 +35,15 @@ public class TelaConsulta extends AppCompatActivity {
         btnProximo=(Button) findViewById(R.id.btnProximoConsulta);
         btnVoltar=(Button) findViewById(R.id.btnVoltarConsulta);
 
-        AbrirBanco();           //Cria ou Abre o BD
-        FecharDB();            //Fechar conexão com o Banco de Dados
-        BuscarDados();
-    }
-
-    public void FecharDB(){
-        db.close();
-    }
-
-    public void AbrirBanco(){
-
-        try { // Criar o BD se caso não existir ou abrir caso existir
-            db=openOrCreateDatabase("bancoAgenda", MODE_PRIVATE, null);
-        }catch (Exception ex){
-            Msg("Erro ao abrir o BD: "+ex);
-        }finally {
-            Log.v("BancodeDados", "BancoAgenda ABERTO com sucesso!");
-        }
-    }
-
-    public void BuscarDados(){
-        AbrirBanco();
-        cursor=db.query( "contatos",
-                new String[]{"nome","fone"},
-                null,
-                null,
-                null,
-                null,
-                null
-        );
+        cursor = bd.BuscarDados(this);
         if(cursor.getCount() != 0){
-            cursor.moveToFirst();
             MostrarDados();
         }else{
-            Msg("Nenhum registro encontrado!");
+            msg.Mensagem("Nenhum registro encontrado!", this);
         }
     }
+
+
 
     public void MostrarDados(){
 
@@ -83,9 +58,9 @@ public class TelaConsulta extends AppCompatActivity {
             MostrarDados();
         }catch (Exception ex){
             if(cursor.isAfterLast()){
-                Msg("Não existem mais registros");
+                msg.Mensagem("Não existem mais registros",this);
             }else{
-                Msg("Erro ao navegar pelos registros");
+                msg.Mensagem("Erro ao navegar pelos registros",this);
             }
         }
     }
@@ -96,19 +71,12 @@ public class TelaConsulta extends AppCompatActivity {
             MostrarDados();
         }catch (Exception ex){
             if(cursor.isBeforeFirst()){
-                Msg("Não existem mais registros");
+                msg.Mensagem("Não existem mais registros",this);
             }else{
-                Msg("Erro ao navegar pelos registros");
+                msg.Mensagem("Erro ao navegar pelos registros", this);
             }
         }
 
-    }
-
-    public void Msg(String txt){
-        AlertDialog.Builder adb=new AlertDialog.Builder(this);
-        adb.setMessage(txt);
-        adb.setNeutralButton("OK",null);
-        adb.show();
     }
 
     public void Voltar(View view){
